@@ -1,0 +1,5 @@
+TikTokApi
+playwright
+pandas
+requests
+python-dotenv

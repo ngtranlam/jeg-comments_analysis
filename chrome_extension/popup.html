@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comment Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: white;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: white;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .logo {
+      height: 48px;
+      max-width: 80px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .tool-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+      color: #111827;
+    }
+
+    .user-greeting {
+      font-size: 16px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    /* Login Form */
+    .login-container {
+      padding: 30px 20px;
+      text-align: center;
+      background: white;
+    }
+
+    .login-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      color: #333;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 20px;
+      background: white;
+    }
+
+    /* Analysis Section */
+    .analysis-section {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .analysis-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #374151;
+    }
+
+    .analysis-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      color: #333;
+      font-size: 13px;
+      resize: vertical;
+      font-family: inherit;
+      line-height: 1.5;
+      transition: all 0.3s ease;
+    }
+
+    .analysis-textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    .analysis-textarea:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+
+    .analysis-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: 10px 16px;
+      background: #dcfce7;
+      border: 1px solid #22c55e;
+      color: #15803d;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+      background: #bbf7d0;
+    }
+
+    .btn-reset {
+      flex: 1;
+      padding: 10px 16px;
+      background: #fef2f2;
+      border: 1px solid #ef4444;
+      color: #dc2626;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-reset:hover {
+      background: #fee2e2;
+    }
+
+    /* Footer */
+    .footer {
+      background: #f3f4f6;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 11px;
+      color: #6b7280;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .save-status {
+      font-size: 11px;
+      margin-top: 8px;
+      opacity: 0.8;
+      text-align: center;
+    }
+
+    .save-success {
+      color: #22c55e;
+    }
+
+    .save-error {
+      color: #ef4444;
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <img src="jeglogo.webp" alt="JEG Technology" class="logo">
+      <div class="header-text">
+        <div class="tool-name">Comment Analysis</div>
+        <div class="user-greeting" id="user-greeting">Welcome!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Container -->
+  <div class="login-container" id="login-container">
+    <div class="login-title">🔐 First Time Setup</div>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" id="user-name" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-input" id="username" placeholder="Choose a username" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="password" placeholder="Create a password" required>
+      </div>
+      <button type="submit" class="btn-login">
+        <span id="login-btn-text">Get Started</span>
+        <div class="loading hidden" id="login-loading"></div>
+      </button>
+    </form>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- Analysis Section -->
+    <div class="analysis-section">
+      <div class="analysis-title">
+        ✨ Custom Analysis Request
+      </div>
+      <textarea 
+        class="analysis-textarea" 
+        id="analysis-request"
+        placeholder="Enter your custom analysis requirements here...
+
+Example:
+- Analyze sentiment of comments (positive, negative, neutral)
+- Find most popular keywords and their meanings
+- Categorize comments by topics
+- Evaluate engagement and interaction levels
+
+If left empty, default analysis will be used."
+      ></textarea>
+      <div class="analysis-actions">
+        <button class="btn-save" id="save-analysis">💾 Save Request</button>
+        <button class="btn-reset" id="reset-analysis">🔄 Reset</button>
+      </div>
+      <div class="save-status" id="save-status"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Copyright 2025 © JEG Technology
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html> 

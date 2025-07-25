@@ -1,0 +1,32 @@
+# Main API dependencies
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+pydantic>=2.0.0
+
+# HTTP client
+httpx
+
+# File operations
+aiofiles
+
+# Configuration
+pyyaml
+
+# Form data
+python-multipart
+
+# Markdown processing
+markdown>=3.4.0
+
+# Google Gemini
+google-generativeai>=0.3.0
+
+# Original TikTok crawler core dependencies
+requests
+pycryptodomex
+tenacity
+rich
+numpy
+
+# OpenAI API for comment analysis
+openai>=1.0.0 

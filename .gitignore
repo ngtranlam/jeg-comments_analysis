@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.env/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data files
+*.json
+!package.json
+!package-lock.json
+
+# Downloads
+backend_api/downloads/*
+!backend_api/downloads/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Chrome Extension build files
+*.crx
+*.pem
+
+# Test files
+test_*
+*_test.py
+*_test.js
+
+# Debug files
+debug_*
+*_debug.*
+
+# Backup files
+*_backup.*
+*_old.*
+*_copy.*
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Media files (except those in chrome_extension)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+!chrome_extension/*.webp
+!chrome_extension/*.png 
