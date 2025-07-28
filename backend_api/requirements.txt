@@ -3,8 +3,8 @@ fastapi>=0.100.0
 uvicorn[standard]>=0.20.0
 pydantic>=2.0.0
 
-# HTTP client
-httpx
+# HTTP client - Pinning to the version expected by TikTok_CMT
+httpx==0.27.0
 
 # File operations
 aiofiles
@@ -18,6 +18,9 @@ python-multipart
 # Markdown processing
 markdown>=3.4.0
 
+# For loading .env files
+python-dotenv>=0.21.0
+
 # Google Gemini
 google-generativeai>=0.3.0
 
@@ -30,3 +33,9 @@ numpy
 
 # OpenAI API for comment analysis
 openai>=1.0.0 
+
+# Dependencies from TikTok_CMT
+browser-cookie3 
+
+
+importlib_resources

@@ -878,8 +878,11 @@ class TikTokCrawlerButton {
         </div>
         
         <div class="floating-download-btn">
+          <button class="btn btn-view" id="view-report">
+            View Report
+          </button>
           <button class="btn btn-export" id="export-pdf">
-            📄 Download PDF
+            Download PDF
           </button>
         </div>
       </div>
@@ -911,11 +914,19 @@ class TikTokCrawlerButton {
         this.startTypewriterEffect(analysisHtml);
       }
 
+      // View Report button
+      const viewBtn = this.universalDialog.querySelector('#view-report');
+      if (viewBtn) {
+        viewBtn.addEventListener('click', async () => {
+          await this.viewReport();
+        });
+      }
+
       // PDF Export button
       const exportBtn = this.universalDialog.querySelector('#export-pdf');
       if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-          this.exportToPdf();
+        exportBtn.addEventListener('click', async () => {
+          await this.exportToPdf();
         });
       }
     }
@@ -1243,6 +1254,20 @@ class TikTokCrawlerButton {
       .replace(/^\s*-{5,}\s*$/gm, '') // Remove title underlines
       .trim();
 
+    // Remove AI introduction text - more comprehensive patterns
+    cleaned = cleaned
+      .replace(/^Chắc chắn rồi!.*$/gmi, '') // Remove "Chắc chắn rồi!" line
+      .replace(/Chắc chắn rồi!.*?(?=\n|\r|$)/gi, '') // Remove any "Chắc chắn rồi!" sentence
+      .replace(/Chào bạn.*?TikTok US\..*?(?=\n|\r|$)/gi, '') // Remove greeting sentence
+      .replace(/Dưới đây là.*?phân tích chi tiết.*?(?=\n|\r|$)/gi, '') // Remove analysis description
+      .replace(/Với vai trò.*?chuyên gia.*?POD.*?(?=\n|\r|$)/gi, '') // Remove role intro
+      .replace(/^.*?chuyên gia R&D.*?POD.*?(?=\n|\r|$)/gmi, '') // Remove any R&D expert intro
+      .replace(/^.*?tôi sẽ phân tích.*?comment.*?(?=\n|\r|$)/gmi, '') // Remove analysis promise
+      .replace(/^.*?insight.*?hành động cụ thể.*?(?=\n|\r|$)/gmi, '') // Remove insight promise
+      .replace(/^.*?áp dụng nguyên tắc.*?Việt Nam.*?(?=\n|\r|$)/gmi, '') // Remove Vietnam reference
+      .replace(/^\s*$/gm, '') // Remove empty lines
+      .trim();
+
     // Final cleanup - remove empty lines and normalize spacing
     cleaned = cleaned
       .replace(/^\s*\n/gm, '') // Remove empty lines
@@ -1262,13 +1287,216 @@ class TikTokCrawlerButton {
 
 
 
-  exportToPdf() {
+  async getUserName() {
+    try {
+      const result = await chrome.storage.local.get(['userData']);
+      if (result.userData && result.userData.name) {
+        return result.userData.name;
+      }
+      return 'Unknown User';
+    } catch (error) {
+      console.error('Error getting user name:', error);
+      return 'Unknown User';
+    }
+  }
+
+  async viewReport() {
+    console.log('👁️ Opening report view...');
+    
+    if (!this.currentAnalysisHtml) {
+      alert('No analysis content to view');
+      return;
+    }
+    
+    const userName = await this.getUserName();
+    
+    // Create a new window with the content for viewing
+    const viewWindow = window.open('', '_blank');
+    
+    // Create a styled HTML document for viewing
+    const htmlDoc = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>TikTok Analysis Report</title>
+        <style>
+          body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6; 
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background: white;
+            width: 100%;
+          }
+          
+          .header {
+            text-align: center;
+            border-bottom: 3px solid #f97316;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+          }
+          
+          .header h1 { 
+            color: #f97316; 
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+          }
+          
+          .meta-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #f97316;
+          }
+          
+          h1, h2, h3, h4 { 
+            color: #1f2937; 
+            margin-top: 25px;
+            margin-bottom: 15px;
+          }
+          
+          h1 { font-size: 24px; }
+          h2 { font-size: 20px; color: #f97316; }
+          h3 { font-size: 18px; color: #374151; }
+          h4 { font-size: 16px; }
+          
+          /* Beautiful table styling */
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+          }
+          
+          table th {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 14px;
+            border: none;
+          }
+          
+          table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.5;
+            border: none;
+          }
+          
+          table tbody tr:nth-child(even) {
+            background: #f9fafb;
+          }
+          
+          table tbody tr:nth-child(odd) {
+            background: white;
+          }
+          
+          ul, ol { 
+            margin: 15px 0; 
+            padding-left: 30px; 
+          }
+          
+          li { 
+            margin: 8px 0; 
+            line-height: 1.5;
+          }
+          
+          strong, b { 
+            color: #1f2937; 
+            font-weight: 600;
+          }
+          
+          p { 
+            margin: 12px 0; 
+            text-align: justify;
+          }
+          
+          blockquote {
+            border-left: 4px solid #f97316;
+            padding-left: 16px;
+            margin: 16px 0;
+            color: #6b7280;
+            font-style: italic;
+          }
+          
+          code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            color: #dc2626;
+          }
+          
+          .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+          }
+          
+
+        </style>
+             </head>
+       <body>
+         <div class="header">
+          <h1>📊 TikTok Comments Analysis Report</h1>
+        </div>
+        
+        <div class="meta-info">
+          <p><strong>📅 Generated:</strong> ${new Date().toLocaleString('vi-VN', {
+            year: 'numeric',
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}</p>
+          <p><strong>🎯 Seller:</strong> ${userName}</p>
+        </div>
+        
+        <div class="content">
+          ${this.cleanAnalysisHtml(this.currentAnalysisHtml)}
+        </div>
+        
+        <div class="footer">
+          <p>Generated by JEG Technology - Comment Analysis Tool</p>
+          <p>© 2025 JEG Technology. All rights reserved.</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    // Write the content to the new window
+    viewWindow.document.write(htmlDoc);
+    viewWindow.document.close();
+    
+    // Focus the new window
+    viewWindow.focus();
+    
+    console.log('✅ Report view opened');
+  }
+
+  async exportToPdf() {
     console.log('📄 Exporting to PDF...');
     
     if (!this.currentAnalysisHtml) {
       alert('No analysis content to export');
       return;
     }
+    
+    const userName = await this.getUserName();
     
     // Create a new window with the content for PDF export
     const printWindow = window.open('', '_blank');
@@ -1436,7 +1664,7 @@ class TikTokCrawlerButton {
             hour: '2-digit',
             minute: '2-digit'
           })}</p>
-          <p><strong>🎯 Analysis Tool:</strong> Comment Analysis Extension by JEG Technology</p>
+          <p><strong>🎯 Seller:</strong> ${userName}</p>
         </div>
         
         <div class="content">
