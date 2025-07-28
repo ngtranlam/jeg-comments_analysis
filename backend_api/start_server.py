@@ -8,6 +8,7 @@ import asyncio
 import signal
 import sys
 from pathlib import Path
+import os
 
 def signal_handler(sig, frame):
     print('\n🛑 Server shutdown requested...')
@@ -27,12 +28,12 @@ def main():
     print(f"📁 Downloads directory: {downloads_dir.absolute()}")
     
     # Server configuration
+    port = int(os.environ.get("PORT", 8000))
     config = {
         "app": "main:app",
         "host": "0.0.0.0",
-        "port": 8000,
-        "reload": True,
-        "reload_dirs": ["."],
+        "port": port,
+        "reload": False,
         "log_level": "info",
         "access_log": True,
     }

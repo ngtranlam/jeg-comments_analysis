@@ -17,10 +17,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 import google.generativeai as genai
-from dotenv import load_dotenv
-
-# Load environment variables from .env file for local development
-load_dotenv()
 
 # Add TikTok_CMT to Python path
 current_dir = Path(__file__).parent
@@ -30,10 +26,12 @@ sys.path.insert(0, str(tiktok_cmt_dir))
 # Import TikTok crawler
 from crawlers.tiktok.web.web_crawler import TikTokWebCrawler
 
+# Load GEMINI_API_KEY from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    raise ValueError("FATAL: GEMINI_API_KEY environment variable not found. Please create a .env file in the backend_api directory and add GEMINI_API_KEY='your_key'.")
-genai.configure(api_key=GEMINI_API_KEY)
+    print("⚠️  GEMINI_API_KEY environment variable not set. Analysis features will be disabled.")
+else:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # Analysis prompt for TikTok POD comments
 ANALYSIS_PROMPT = """# PROMPT PHÂN TÍCH COMMENT VIDEO TIKTOK POD
