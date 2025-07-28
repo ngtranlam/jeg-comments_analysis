@@ -32,7 +32,7 @@ class TikTokWebCrawler:
 
     async def fetch_post_comment(self, aweme_id: str, cursor: int = 0, count: int = 20, current_region: str = ""):
         kwargs = await self.get_tiktok_headers()
-        base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
+        base_crawler = BaseCrawler(crawler_headers=kwargs["headers"])
         async with base_crawler as crawler:
             params = PostComment(aweme_id=aweme_id, cursor=cursor, count=count, current_region=current_region)
             endpoint = BogusManager.model_2_endpoint(
@@ -44,7 +44,7 @@ class TikTokWebCrawler:
     async def fetch_post_comment_reply(self, item_id: str, comment_id: str, cursor: int = 0, count: int = 20,
                                        current_region: str = ""):
         kwargs = await self.get_tiktok_headers()
-        base_crawler = BaseCrawler(proxies=kwargs["proxies"], crawler_headers=kwargs["headers"])
+        base_crawler = BaseCrawler(crawler_headers=kwargs["headers"])
         async with base_crawler as crawler:
             params = PostCommentReply(item_id=item_id, comment_id=comment_id, cursor=cursor, count=count,
                                       current_region=current_region)

@@ -23,18 +23,12 @@ class BaseCrawler:
 
     def __init__(
             self,
-            proxies: dict = None,
             max_retries: int = 3,
             max_connections: int = 50,
             timeout: int = 10,
             max_tasks: int = 50,
             crawler_headers: dict = {},
     ):
-        if isinstance(proxies, dict):
-            self.proxies = proxies
-        else:
-            self.proxies = None
-
         self.crawler_headers = crawler_headers or {}
         self._max_tasks = max_tasks
         self.semaphore = asyncio.Semaphore(max_tasks)
@@ -46,7 +40,6 @@ class BaseCrawler:
         self.timeout = httpx.Timeout(timeout)
         self.aclient = httpx.AsyncClient(
             headers=self.crawler_headers,
-            proxies=self.proxies,
             timeout=self.timeout,
             limits=self.limits,
             transport=self.atransport,
@@ -108,8 +101,8 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} proxy: {1} class: {2}"
-                                         .format(url, self.proxies, self.__class__.__name__))
+                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+                                         .format(url, self.__class__.__name__))
 
             except httpx.HTTPStatusError as http_error:
                 self.handle_http_status_error(http_error, url, attempt + 1)
@@ -143,8 +136,8 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} proxy: {1} class: {2}"
-                                         .format(url, self.proxies, self.__class__.__name__))
+                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+                                         .format(url, self.__class__.__name__))
 
             except httpx.HTTPStatusError as http_error:
                 self.handle_http_status_error(http_error, url, attempt + 1)
@@ -159,8 +152,8 @@ class BaseCrawler:
             return response
 
         except httpx.RequestError:
-            raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} proxy: {1} class: {2}"
-                                     .format(url, self.proxies, self.__class__.__name__))
+            raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+                                     .format(url, self.__class__.__name__))
 
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)

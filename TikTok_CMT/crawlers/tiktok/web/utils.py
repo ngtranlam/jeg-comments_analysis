@@ -59,7 +59,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
+        with httpx.Client(transport=transport) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], headers=headers, content=payload
@@ -84,7 +84,7 @@ class TokenManager:
     @classmethod
     def gen_ttwid(cls, cookie: str) -> str:
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
+        with httpx.Client(transport=transport) as client:
             try:
                 response = client.post(
                     cls.ttwid_conf["url"],
@@ -121,7 +121,7 @@ class TokenManager:
     @classmethod
     def gen_odin_tt(cls):
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
+        with httpx.Client(transport=transport) as client:
             try:
                 response = client.get(cls.odin_tt_conf["url"])
                 response.raise_for_status()
@@ -197,7 +197,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-                transport=transport, proxies=TokenManager.proxies, timeout=10
+                transport=transport, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -253,7 +253,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-                transport=transport, proxies=TokenManager.proxies, timeout=10
+                transport=transport, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -327,7 +327,7 @@ class AwemeIdFetcher:
         print(f"Input URL needs redirection: {url}")
         transport = httpx.AsyncHTTPTransport(retries=10)
         async with httpx.AsyncClient(
-                transport=transport, proxies=TokenManager.proxies, timeout=10
+                transport=transport, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
