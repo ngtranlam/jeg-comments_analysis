@@ -32,4 +32,7 @@ numpy
 openai>=1.0.0
 
 # For cookie loading from browser
-browser-cookie3>=0.19.1 
+browser-cookie3>=0.19.1
+
+# Dependency for browser-cookie3 on Linux
+importlib-resources>=6.0.0 
