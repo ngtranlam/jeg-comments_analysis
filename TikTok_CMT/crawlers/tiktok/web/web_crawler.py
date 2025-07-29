@@ -25,6 +25,8 @@ class TikTokWebCrawler:
                 "Referer": tiktok_config["headers"]["Referer"],
                 "Cookie": tiktok_config["headers"]["Cookie"],
             },
+            "proxies": {"http://": tiktok_config["proxies"]["http"],
+                        "https://": tiktok_config["proxies"]["https"]}
         }
         return kwargs
 
