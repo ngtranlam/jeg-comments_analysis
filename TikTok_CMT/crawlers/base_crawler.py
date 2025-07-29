@@ -43,6 +43,7 @@ class BaseCrawler:
             timeout=self.timeout,
             limits=self.limits,
             transport=self.atransport,
+            proxies={},
         )
 
     async def fetch_response(self, endpoint: str) -> Response:
