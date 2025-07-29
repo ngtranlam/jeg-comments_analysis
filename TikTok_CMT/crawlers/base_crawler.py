@@ -78,7 +78,7 @@ class BaseCrawler:
             else:
                 logger.error("Invalid response type. Response type: {0}".format(type(response)))
 
-            raise APIResponseError("Failed to get data")
+            return None
 
     async def get_fetch_data(self, url: str):
         for attempt in range(self._max_retries):
@@ -86,13 +86,13 @@ class BaseCrawler:
                 response = await self.aclient.get(url, follow_redirects=True)
                 if not response.text.strip() or not response.content:
                     error_message = "Attempt {0} empty response, status code: {1}, URL:{2}".format(attempt + 1,
-                                                                                         response.status_code,
-                                                                                         response.url)
+                                                                                                 response.status_code,
+                                                                                                 response.url)
 
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
-                        raise APIRetryExhaustedError("Failed to get endpoint data, max retries reached")
+                        return None
 
                     await asyncio.sleep(self._timeout)
                     continue
@@ -101,14 +101,15 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+                logger.error("Failed to connect endpoint, check network or proxy: {0} class: {1}"
                                          .format(url, self.__class__.__name__))
+                if attempt == self._max_retries - 1:
+                    return None
 
             except httpx.HTTPStatusError as http_error:
                 self.handle_http_status_error(http_error, url, attempt + 1)
-
-            except APIError as e:
-                e.display_error()
+                if attempt == self._max_retries - 1:
+                    return None
 
     async def post_fetch_data(self, url: str, params: dict = {}, data=None):
         for attempt in range(self._max_retries):
@@ -121,13 +122,13 @@ class BaseCrawler:
                 )
                 if not response.text.strip() or not response.content:
                     error_message = "Attempt {0} empty response, status code: {1}, URL:{2}".format(attempt + 1,
-                                                                                         response.status_code,
-                                                                                         response.url)
+                                                                                                 response.status_code,
+                                                                                                 response.url)
 
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
-                        raise APIRetryExhaustedError("Failed to get endpoint data, max retries reached")
+                        return None
 
                     await asyncio.sleep(self._timeout)
                     continue
@@ -136,14 +137,15 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+                logger.error("Failed to connect endpoint, check network or proxy: {0} class: {1}"
                                          .format(url, self.__class__.__name__))
+                if attempt == self._max_retries - 1:
+                    return None
 
             except httpx.HTTPStatusError as http_error:
                 self.handle_http_status_error(http_error, url, attempt + 1)
-
-            except APIError as e:
-                e.display_error()
+                if attempt == self._max_retries - 1:
+                    return None
 
     async def head_fetch_data(self, url: str):
         try:
@@ -152,14 +154,13 @@ class BaseCrawler:
             return response
 
         except httpx.RequestError:
-            raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
+            logger.error("Failed to connect endpoint, check network or proxy: {0} class: {1}"
                                      .format(url, self.__class__.__name__))
+            return None
 
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)
-
-        except APIError as e:
-            e.display_error()
+            return None
 
     def handle_http_status_error(self, http_error, url: str, attempt):
         response = getattr(http_error, "response", None)
@@ -167,23 +168,22 @@ class BaseCrawler:
 
         if response is None or status_code is None:
             logger.error("HTTP status error: {0}, URL: {1}, attempt: {2}".format(http_error, url, attempt))
-            raise APIResponseError(f"Unexpected error while handling HTTP error: {http_error}")
+            return
 
         if status_code == 302:
             pass
         elif status_code == 404:
-            raise APINotFoundError(f"HTTP Status Code {status_code}")
+            logger.error(f"HTTP Status Code 404: Not Found for URL {url}")
         elif status_code == 503:
-            raise APIUnavailableError(f"HTTP Status Code {status_code}")
+            logger.error(f"HTTP Status Code 503: Service Unavailable for URL {url}")
         elif status_code == 408:
-            raise APITimeoutError(f"HTTP Status Code {status_code}")
+            logger.error(f"HTTP Status Code 408: Request Timeout for URL {url}")
         elif status_code == 401:
-            raise APIUnauthorizedError(f"HTTP Status Code {status_code}")
+            logger.error(f"HTTP Status Code 401: Unauthorized for URL {url}")
         elif status_code == 429:
-            raise APIRateLimitError(f"HTTP Status Code {status_code}")
+            logger.error(f"HTTP Status Code 429: Rate Limit Exceeded for URL {url}")
         else:
             logger.error("HTTP status error: {0}, URL: {1}, attempt: {2}".format(status_code, url, attempt))
-            raise APIResponseError(f"HTTP status error: {status_code}")
 
     async def close(self):
         await self.aclient.aclose()

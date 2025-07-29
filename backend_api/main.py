@@ -486,6 +486,12 @@ async def fetch_comments_with_progress(crawler, video_id: str, task_id: str):
                 aweme_id=video_id, cursor=cursor, count=20
             )
             
+            if response is None:
+                print(f"Error fetching comments page {page}: Failed to get data")
+                # Optionally, update task status to reflect the issue
+                tasks[task_id]["message"] = f"Error fetching comments page {page}. Retrying might be needed."
+                break
+
             comments = response.get("comments", [])
             all_comments.extend(comments)
             
@@ -572,6 +578,10 @@ async def fetch_comment_replies(crawler, video_id: str, comment_id: str):
             response = await crawler.fetch_post_comment_reply(
                 item_id=video_id, comment_id=comment_id, cursor=cursor, count=20
             )
+
+            if response is None:
+                print(f"Error fetching replies for comment {comment_id}: Failed to get data")
+                break
             
             replies = response.get("comments", [])
             all_replies.extend(replies)
