@@ -148,6 +148,15 @@ class TokenManager:
                     raise APIResponseError("Link: {0}, Status code {1}: {2}".format(
                         e.response.url, e.response.status_code, e.response.text))
 
+    @classmethod
+    def reset(cls):
+        """
+        Resets the shared state of the TokenManager.
+        This should be called before starting a new, independent crawl task.
+        """
+        cls.tokens = {}
+        cls.cookies = {}
+
 
 class BogusManager:
     @classmethod

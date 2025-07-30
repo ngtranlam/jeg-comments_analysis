@@ -25,6 +25,7 @@ sys.path.insert(0, str(tiktok_cmt_dir))
 
 # Import TikTok crawler
 from crawlers.tiktok.web.web_crawler import TikTokWebCrawler
+from crawlers.tiktok.web.utils import TokenManager
 
 # Load GEMINI_API_KEY from environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -405,6 +406,9 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
     start_time = time.time()
     
     try:
+        # IMPORTANT: Reset the token manager state before each crawl
+        TokenManager.reset()
+
         # Update task status
         tasks[task_id]["status"] = "running"
         tasks[task_id]["message"] = "Getting comments..."

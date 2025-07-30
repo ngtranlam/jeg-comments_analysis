@@ -10,7 +10,7 @@ class TikTokCrawlerButton {
     this.currentAnalysisHtml = null;
     this.typewriterTimeout = null;
     this.customAnalysisRequest = null;
-    this.API_BASE = 'http://localhost:8000';
+    this.API_BASE = 'https://tiktok-comments-crawler.onrender.com';
     
     this.init();
   }

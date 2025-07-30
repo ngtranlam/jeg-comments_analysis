@@ -2,7 +2,7 @@
 
 class CommentAnalysisPopup {
   constructor() {
-    this.API_BASE = 'http://localhost:8000';
+    this.API_BASE = 'https://tiktok-comments-crawler.onrender.com';
     this.currentTab = null;
     this.isLoggedIn = false;
     this.userData = null;
