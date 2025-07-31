@@ -29,8 +29,7 @@ class TikTokWebCrawler(BaseCrawler):
         
         # Call parent constructor with the correct headers and other params
         super().__init__(
-            crawler_headers=self.headers,
-            cookies=kwargs.get("cookies", {})
+            crawler_headers=self.headers
             # Other parameters will use defaults from BaseCrawler's signature
         )
 
