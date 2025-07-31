@@ -32,7 +32,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     print("⚠️  GEMINI_API_KEY environment variable not set. Analysis features will be disabled.")
 else:
-genai.configure(api_key=GEMINI_API_KEY)
+    genai.configure(api_key=GEMINI_API_KEY)
+
 
 # Analysis prompt for TikTok POD comments
 ANALYSIS_PROMPT = """# PROMPT PHÂN TÍCH COMMENT VIDEO TIKTOK POD
@@ -406,8 +407,16 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
     start_time = time.time()
     
     try:
-        # IMPORTANT: Reset the token manager state before each crawl
+        # Step 1: IMPORTANT - Reset all shared state from previous runs
         TokenManager.reset()
+
+        # Step 2: Initialize a new crawler instance for this specific task.
+        # This ensures it gets a fresh, clean set of headers.
+        crawler = TikTokWebCrawler()
+
+        # Step 3: Explicitly set the fresh headers back into the TokenManager.
+        # This prevents the manager from using stale headers from another instance.
+        TokenManager.headers = crawler.headers
 
         # Update task status
         tasks[task_id]["status"] = "running"
@@ -415,7 +424,7 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
         tasks[task_id]["updated_at"] = datetime.now()
         
         # Initialize crawler
-        crawler = TikTokWebCrawler()
+        # NO LONGER NEEDED HERE: crawler = TikTokWebCrawler()
         all_comments = []
         
         # Fetch comments with progress tracking
