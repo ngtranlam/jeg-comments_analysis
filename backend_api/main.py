@@ -18,11 +18,6 @@ from datetime import datetime
 from pathlib import Path
 import google.generativeai as genai
 
-# Add TikTok_CMT to Python path
-current_dir = Path(__file__).parent
-tiktok_cmt_dir = current_dir.parent / "TikTok_CMT"
-sys.path.insert(0, str(tiktok_cmt_dir))
-
 # Import TikTok crawler
 from crawlers.tiktok.web.web_crawler import TikTokWebCrawler
 from crawlers.tiktok.web.utils import TokenManager
