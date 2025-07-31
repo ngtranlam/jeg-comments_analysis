@@ -97,8 +97,18 @@ class BaseCrawler:
                     await asyncio.sleep(self._timeout)
                     continue
 
-                response.raise_for_status()
-                return response
+                # When the response status code is 200, it is returned directly.
+                if response.status_code == 200:
+                    self.logger.info("BaseCrawler response success")
+                    
+                    response_json = response.json()
+                    if response_json is None:
+                        raise APIResponseError("Invalid response type. Response is None.")
+                        
+                    return response_json
+
+                # When the response status code is not 200, an exception is thrown.
+                raise HTTPStatusError(
 
             except httpx.RequestError:
                 raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
