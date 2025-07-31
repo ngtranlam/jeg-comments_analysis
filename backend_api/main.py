@@ -32,7 +32,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     print("⚠️  GEMINI_API_KEY environment variable not set. Analysis features will be disabled.")
 else:
-genai.configure(api_key=GEMINI_API_KEY)
+    genai.configure(api_key=GEMINI_API_KEY)
 
 # Analysis prompt for TikTok POD comments
 ANALYSIS_PROMPT = """# PROMPT PHÂN TÍCH COMMENT VIDEO TIKTOK POD
