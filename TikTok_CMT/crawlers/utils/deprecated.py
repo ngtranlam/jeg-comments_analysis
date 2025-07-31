@@ -1,5 +1,10 @@
 import warnings
 import functools
+from crawlers.base_crawler import BaseCrawler
+from crawlers.utils.api_exceptions import APIResponseError, APIConnectionError
+from crawlers.utils.logger import logger
+from typing import Optional, Union, Any
+from httpx import Response, HTTPStatusError
 
 
 def deprecated(message):
