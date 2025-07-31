@@ -1,8 +1,7 @@
 from __future__ import annotations
 from crawlers.base_crawler import BaseCrawler
+from crawlers.utils.utils import get_user_agent, get_device_id
 from crawlers.tiktok.web.utils import (
-    get_user_agent,
-    get_device_id,
     is_response_success,
     TokenManager,
     BogusManager,
