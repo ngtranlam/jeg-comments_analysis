@@ -36,3 +36,6 @@ browser-cookie3>=0.19.1
 
 # Dependency for browser-cookie3 on Linux
 importlib-resources>=6.0.0 
+
+# For generating random user agents
+fake-useragent>=0.1.11 

@@ -5,6 +5,7 @@ from crawlers.base_crawler import BaseCrawler
 from crawlers.tiktok.web.endpoints import TikTokAPIEndpoints
 from crawlers.tiktok.web.utils import BogusManager
 from crawlers.tiktok.web.models import PostComment, PostCommentReply
+from fake_useragent import UserAgent
 
 path = os.path.abspath(os.path.dirname(__file__))
 
@@ -36,14 +37,17 @@ class TikTokWebCrawler(BaseCrawler):
     @staticmethod
     def get_default_headers() -> dict:
         """
-        Get default headers for the crawler.
+        Get default headers for the crawler, with a random User-Agent.
         """
+        ua = UserAgent()
+        random_user_agent = ua.random
+        
         tiktok_config = config["TokenManager"]["tiktok"]
-        return {
-            "User-Agent": tiktok_config["headers"]["User-Agent"],
-            "Referer": tiktok_config["headers"]["Referer"],
-            "Cookie": tiktok_config["headers"]["Cookie"],
-        }
+        headers = tiktok_config["headers"].copy()
+        headers["User-Agent"] = random_user_agent
+        
+        logger.info(f"Generated new User-Agent: {random_user_agent}")
+        return headers
 
     async def get_tiktok_headers(self):
         tiktok_config = config["TokenManager"]["tiktok"]
