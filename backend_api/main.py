@@ -406,9 +406,6 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
     start_time = time.time()
     
     try:
-        # IMPORTANT: Reset the token manager state before each crawl
-        TokenManager.reset()
-
         # Update task status
         tasks[task_id]["status"] = "running"
         tasks[task_id]["message"] = "Getting comments..."
