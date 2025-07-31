@@ -107,8 +107,8 @@ class BaseCrawler:
                         
                     return response_json
 
-                # When the response status code is not 200, an exception is thrown.
-                raise HTTPStatusError(
+                # If the status code is not 200, raise_for_status() will throw an exception.
+                response.raise_for_status()
 
             except httpx.RequestError:
                 raise APIConnectionError("Failed to connect endpoint, check network or proxy: {0} class: {1}"
