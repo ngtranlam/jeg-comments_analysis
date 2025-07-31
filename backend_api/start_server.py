@@ -3,21 +3,24 @@
 TikTok Comments Crawler API Server Starter
 """
 
-import sys
-from pathlib import Path
-
-# Set up the Python path before anything else
-# This ensures that the application can find the 'TikTok_CMT' module
-# when Uvicorn loads it.
-current_dir = Path(__file__).resolve().parent
-project_root = current_dir.parent
-sys.path.insert(0, str(project_root / "TikTok_CMT"))
-sys.path.insert(0, str(project_root)) # Also add project root for consistency
-
 import uvicorn
 import asyncio
 import signal
+import sys
+from pathlib import Path
 import os
+
+# -- Path Setup: Start --
+# This logic ensures that the Python interpreter can find our modules.
+# It should be at the very top, before any other imports.
+# We resolve the path to the current file's directory.
+# Then we go up one level to get to the project's root directory (`backend_api`).
+# From there, we can construct the full path to the `TikTok_CMT` directory.
+# By adding this path to `sys.path`, we allow Python to import from it.
+current_dir = Path(__file__).resolve().parent
+project_root = current_dir.parent
+sys.path.insert(0, str(project_root))
+# -- Path Setup: End --
 
 def signal_handler(sig, frame):
     print('\n🛑 Server shutdown requested...')
