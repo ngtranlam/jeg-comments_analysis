@@ -495,9 +495,10 @@ async def fetch_comments_with_progress(crawler, video_id: str, task_id: str):
     
     while has_more and tasks[task_id]["status"] == "running":
         try:
-            response = await crawler.fetch_post_comment(
+            response_obj = await crawler.fetch_post_comment(
                 aweme_id=video_id, cursor=cursor, count=20
             )
+            response = response_obj.json()
             
             comments = response.get("comments", [])
             all_comments.extend(comments)
@@ -582,9 +583,10 @@ async def fetch_comment_replies(crawler, video_id: str, comment_id: str):
     
     while has_more:
         try:
-            response = await crawler.fetch_post_comment_reply(
+            response_obj = await crawler.fetch_post_comment_reply(
                 item_id=video_id, comment_id=comment_id, cursor=cursor, count=20
             )
+            response = response_obj.json()
             
             replies = response.get("comments", [])
             all_replies.extend(replies)

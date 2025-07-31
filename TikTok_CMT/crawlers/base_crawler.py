@@ -101,11 +101,12 @@ class BaseCrawler:
                 if response.status_code == 200:
                     self.logger.info("BaseCrawler response success")
                     
+                    # Check for None response before attempting to parse
                     response_json = response.json()
                     if response_json is None:
                         raise APIResponseError("Invalid response type. Response is None.")
                         
-                    return response_json
+                    return response
 
                 # If the status code is not 200, raise_for_status() will throw an exception.
                 response.raise_for_status()

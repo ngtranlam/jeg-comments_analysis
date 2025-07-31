@@ -6,6 +6,7 @@ from crawlers.utils.api_exceptions import APIResponseError, APIConnectionError, 
 from crawlers.utils.logger import logger
 from crawlers.tiktok.web.models import PostComment, PostCommentReply
 from crawlers.tiktok.web.utils import TokenManager, BogusManager, config
+from crawlers.tiktok.web.endpoints import TikTokAPIEndpoints
 from fake_useragent import UserAgent
 
 path = os.path.abspath(os.path.dirname(__file__))
@@ -65,24 +66,20 @@ class TikTokWebCrawler(BaseCrawler):
 
     async def fetch_post_comment(self, aweme_id: str, cursor: int = 0, count: int = 20, current_region: str = ""):
         kwargs = await self.get_tiktok_headers()
-        base_crawler = BaseCrawler(crawler_headers=kwargs["headers"])
-        async with base_crawler as crawler:
-            params = PostComment(aweme_id=aweme_id, cursor=cursor, count=count, current_region=current_region)
-            endpoint = BogusManager.model_2_endpoint(
-                TikTokAPIEndpoints.POST_COMMENT, params.dict(), kwargs["headers"]["User-Agent"]
-            )
-            response = await crawler.fetch_get_json(endpoint)
+        params = PostComment(aweme_id=aweme_id, cursor=cursor, count=count, current_region=current_region)
+        endpoint = BogusManager.model_2_endpoint(
+            TikTokAPIEndpoints.POST_COMMENT, params.dict(), self.headers["User-Agent"]
+        )
+        response = await self.fetch_get_json(endpoint)
         return response
 
     async def fetch_post_comment_reply(self, item_id: str, comment_id: str, cursor: int = 0, count: int = 20,
                                        current_region: str = ""):
         kwargs = await self.get_tiktok_headers()
-        base_crawler = BaseCrawler(crawler_headers=kwargs["headers"])
-        async with base_crawler as crawler:
-            params = PostCommentReply(item_id=item_id, comment_id=comment_id, cursor=cursor, count=count,
+        params = PostCommentReply(item_id=item_id, comment_id=comment_id, cursor=cursor, count=count,
                                       current_region=current_region)
-            endpoint = BogusManager.model_2_endpoint(
-                TikTokAPIEndpoints.POST_COMMENT_REPLY, params.dict(), kwargs["headers"]["User-Agent"]
-            )
-            response = await crawler.fetch_get_json(endpoint)
+        endpoint = BogusManager.model_2_endpoint(
+            TikTokAPIEndpoints.POST_COMMENT_REPLY, params.dict(), self.headers["User-Agent"]
+        )
+        response = await self.fetch_get_json(endpoint)
         return response
