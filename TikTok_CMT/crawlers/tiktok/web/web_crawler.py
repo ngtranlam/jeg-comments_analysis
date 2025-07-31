@@ -12,10 +12,39 @@ with open(f"{path}/config.yaml", "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 
-class TikTokWebCrawler:
+class TikTokWebCrawler(BaseCrawler):
+    """
+    TikTok Web Crawler
+    """
 
-    def __init__(self):
-        self.proxy_pool = None
+    def __init__(self, **kwargs):
+        """
+        Initialize the Crawler.
+        """
+        # Set headers for this instance
+        if kwargs.get("headers") and isinstance(kwargs.get("headers"), dict):
+            self.headers = kwargs["headers"]
+        else:
+            self.headers = self.get_default_headers()
+        
+        # Call parent constructor with the correct headers and other params
+        super().__init__(
+            crawler_headers=self.headers,
+            cookies=kwargs.get("cookies", {})
+            # Other parameters will use defaults from BaseCrawler's signature
+        )
+
+    @staticmethod
+    def get_default_headers() -> dict:
+        """
+        Get default headers for the crawler.
+        """
+        tiktok_config = config["TokenManager"]["tiktok"]
+        return {
+            "User-Agent": tiktok_config["headers"]["User-Agent"],
+            "Referer": tiktok_config["headers"]["Referer"],
+            "Cookie": tiktok_config["headers"]["Cookie"],
+        }
 
     async def get_tiktok_headers(self):
         tiktok_config = config["TokenManager"]["tiktok"]
