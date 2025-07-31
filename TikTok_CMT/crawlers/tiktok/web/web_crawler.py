@@ -1,12 +1,12 @@
 import yaml
 import os
 
-from crawlers.base_crawler import BaseCrawler
-from crawlers.tiktok.web.endpoints import TikTokAPIEndpoints
-from crawlers.tiktok.web.utils import BogusManager
-from crawlers.tiktok.web.models import PostComment, PostCommentReply
-from fake_useragent import UserAgent
+from ..base_crawler import BaseCrawler
+from ..utils.api_exceptions import APIResponseError, APIConnectionError, APIRateLimitError
 from ..utils.logger import logger
+from .models import PostComment, PostCommentReply
+from .utils import TokenManager, BogusManager, config
+from fake_useragent import UserAgent
 
 path = os.path.abspath(os.path.dirname(__file__))
 
