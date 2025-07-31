@@ -4,8 +4,9 @@ services:
     env: python
     plan: free
     region: singapore
-    buildCommand: "pip install -r backend_api/requirements.txt"
-    startCommand: "python backend_api/start_server.py"
+    rootDir: backend_api
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python start_server.py"
     envVars:
       - key: GEMINI_API_KEY
         sync: false 

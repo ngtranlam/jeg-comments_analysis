@@ -10,18 +10,6 @@ import sys
 from pathlib import Path
 import os
 
-# -- Path Setup: Start --
-# This is the definitive fix for the ModuleNotFoundError.
-# The server needs to know where the 'crawlers' package is.
-# The 'crawlers' package lives inside the 'TikTok_CMT' directory.
-# This code finds the project root, constructs the path to 'TikTok_CMT',
-# and adds it to the Python path, allowing all imports to work correctly.
-current_dir = Path(__file__).resolve().parent  # Resolves to backend_api's path
-project_root = current_dir.parent             # Resolves to the project root
-tiktok_cmt_dir = project_root / "TikTok_CMT"
-sys.path.insert(0, str(tiktok_cmt_dir))
-# -- Path Setup: End --
-
 def signal_handler(sig, frame):
     print('\n🛑 Server shutdown requested...')
     sys.exit(0)

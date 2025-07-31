@@ -18,6 +18,11 @@ from datetime import datetime
 from pathlib import Path
 import google.generativeai as genai
 
+# Add TikTok_CMT to Python path
+current_dir = Path(__file__).parent
+tiktok_cmt_dir = current_dir.parent / "TikTok_CMT"
+sys.path.insert(0, str(tiktok_cmt_dir))
+
 # Import TikTok crawler
 from crawlers.tiktok.web.web_crawler import TikTokWebCrawler
 from crawlers.tiktok.web.utils import TokenManager
@@ -27,7 +32,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     print("⚠️  GEMINI_API_KEY environment variable not set. Analysis features will be disabled.")
 else:
-    genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Analysis prompt for TikTok POD comments
 ANALYSIS_PROMPT = """# PROMPT PHÂN TÍCH COMMENT VIDEO TIKTOK POD
@@ -401,6 +406,9 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
     start_time = time.time()
     
     try:
+        # IMPORTANT: Reset the token manager state before each crawl
+        TokenManager.reset()
+
         # Update task status
         tasks[task_id]["status"] = "running"
         tasks[task_id]["message"] = "Getting comments..."
