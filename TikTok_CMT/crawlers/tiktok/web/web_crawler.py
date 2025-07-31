@@ -6,6 +6,7 @@ from crawlers.tiktok.web.endpoints import TikTokAPIEndpoints
 from crawlers.tiktok.web.utils import BogusManager
 from crawlers.tiktok.web.models import PostComment, PostCommentReply
 from fake_useragent import UserAgent
+from ..utils.logger import logger
 
 path = os.path.abspath(os.path.dirname(__file__))
 
