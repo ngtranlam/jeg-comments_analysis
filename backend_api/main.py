@@ -32,8 +32,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     print("⚠️  GEMINI_API_KEY environment variable not set. Analysis features will be disabled.")
 else:
-    genai.configure(api_key=GEMINI_API_KEY)
-
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Analysis prompt for TikTok POD comments
 ANALYSIS_PROMPT = """# PROMPT PHÂN TÍCH COMMENT VIDEO TIKTOK POD
@@ -407,16 +406,8 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
     start_time = time.time()
     
     try:
-        # Step 1: IMPORTANT - Reset all shared state from previous runs
+        # IMPORTANT: Reset the token manager state before each crawl
         TokenManager.reset()
-
-        # Step 2: Initialize a new crawler instance for this specific task.
-        # This ensures it gets a fresh, clean set of headers.
-        crawler = TikTokWebCrawler()
-
-        # Step 3: Explicitly set the fresh headers back into the TokenManager.
-        # This prevents the manager from using stale headers from another instance.
-        TokenManager.headers = crawler.headers
 
         # Update task status
         tasks[task_id]["status"] = "running"
@@ -424,7 +415,7 @@ async def crawl_video_comments(task_id: str, request: CrawlRequest):
         tasks[task_id]["updated_at"] = datetime.now()
         
         # Initialize crawler
-        # NO LONGER NEEDED HERE: crawler = TikTokWebCrawler()
+        crawler = TikTokWebCrawler()
         all_comments = []
         
         # Fetch comments with progress tracking
@@ -495,10 +486,9 @@ async def fetch_comments_with_progress(crawler, video_id: str, task_id: str):
     
     while has_more and tasks[task_id]["status"] == "running":
         try:
-            response_obj = await crawler.fetch_post_comment(
+            response = await crawler.fetch_post_comment(
                 aweme_id=video_id, cursor=cursor, count=20
             )
-            response = response_obj.json()
             
             comments = response.get("comments", [])
             all_comments.extend(comments)
@@ -583,10 +573,9 @@ async def fetch_comment_replies(crawler, video_id: str, comment_id: str):
     
     while has_more:
         try:
-            response_obj = await crawler.fetch_post_comment_reply(
+            response = await crawler.fetch_post_comment_reply(
                 item_id=video_id, comment_id=comment_id, cursor=cursor, count=20
             )
-            response = response_obj.json()
             
             replies = response.get("comments", [])
             all_replies.extend(replies)

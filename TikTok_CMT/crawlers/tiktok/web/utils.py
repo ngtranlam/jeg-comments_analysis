@@ -156,7 +156,6 @@ class TokenManager:
         """
         cls.tokens = {}
         cls.cookies = {}
-        cls.headers = {}
 
 
 class BogusManager:
